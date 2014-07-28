@@ -1,0 +1,14 @@
+{
+  "name": "ffmpeg",
+  "version": "0.0.1",
+  "description": "A simple app to fetch a destiny media file and convert it to an outputformat",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "bobzsj87@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.7.2"
+  }
+}
