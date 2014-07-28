@@ -1,5 +1,5 @@
 {
-  "name": "ffmpeg",
+  "name": "ffmpeg-fetch-convert",
   "version": "0.0.1",
   "description": "A simple app to fetch a destiny media file and convert it to an outputformat",
   "main": "app.js",
