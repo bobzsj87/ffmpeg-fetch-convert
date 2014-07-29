@@ -49,8 +49,7 @@ app.get("/", function(req, res){
       ffmpeg.on('close', function(code){
         if (code == 0){
           console.log('Processing finished');
-          resp = {result:'success', input: path.join(httpPath, destFilename), output: path.join(httpPath, saveFilename)};
-          res.send(JSON.stringify(resp));
+          res.send({result:'success', input: path.join(httpPath, destFilename), output: path.join(httpPath, saveFilename)});
         }
         else{
           console.log('An error occurred');
@@ -59,7 +58,7 @@ app.get("/", function(req, res){
           fs.unlink(destFile, function(){});
           fs.unlink(saveFile, function(){});
 
-          res.send(JSON.stringify({result:'failed'}));
+          res.send({result:'failed'});
         }
       });
     });
@@ -75,4 +74,4 @@ if (config.serveStatic){
   app.use(httpPath, express.static(dataPath));
 }
 app.listen(config.port || 3000);
-
+console.log('server started');
