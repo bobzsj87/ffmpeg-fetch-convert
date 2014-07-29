@@ -2,7 +2,7 @@ var express = require('express'),
     spawn = require('child_process').spawn,
     fs = require('fs'),
     crypto = require('crypto'),
-    http = require("http"),
+    http = require('http'),
     path = require('path'),
     config = require('./config');
 
@@ -19,7 +19,7 @@ var download = function(url, dest, cb) {
       file.close(cb);  // close() is async, call cb after close completes.
     });
   }).on('error', function(err) { // Handle errors
-    fs.unlink(dest); // Delete the file async. (But we don't check the result)
+    fs.unlink(dest, function(){}); // Delete the file async. (But we don't check the result)
     if (cb) cb(err.message);
   });
 };
@@ -30,30 +30,33 @@ app.get("/", function(req, res){
   var inputFormat = req.query.inputformat;
   var outputFormat = req.query.outputformat;
   if (from && inputFormat && outputFormat){
-    var destFilename = crypto.createHash('md5').update(from + String(new Date().getTime())).digest('hex')+"."+ inputFormat;
-    var saveFilename = crypto.createHash('md5').update(destFilename + String(new Date().getTime())).digest('hex')+"."+ outputFormat;
+    var destFilename = crypto.createHash('md5').update(from + String(new Date().getTime())).digest('hex')+'.'+ inputFormat;
+    var saveFilename = crypto.createHash('md5').update(destFilename + String(new Date().getTime())).digest('hex')+'.'+ outputFormat;
     var destFile = path.join(config.dataPath, destFilename);
     var saveFile = path.join(config.dataPath, saveFilename);
 
     download(from, destFile, function(){
       var param = [];
       if (req.query.param){
-        param = req.query.param.split(",");
+        param = req.query.param.split(',');
       }
-      param.splice(0, 0, "-i", destFile);
+      param.splice(0, 0, '-i', destFile);
       param.push(saveFile);
-      var ffmpeg = spawn("ffmpeg", param);
+      var ffmpeg = spawn('ffmpeg', param);
       ffmpeg.on('close', function(code){
         if (code == 0){
-          console.log('Processing finished !');
-          resp = {input: path.join(config.httpPath, destFilename), output: path.join(config.httpPath, saveFilename)};
+          console.log('Processing finished');
+          resp = {result:'success', input: path.join(config.httpPath, destFilename), output: path.join(config.httpPath, saveFilename)};
           res.send(JSON.stringify(resp));
         }
         else{
           console.log('An error occurred');
-          fs.unlink(destFile);
-          fs.unlink(saveFile);
-          res.send("ffmpeg failed");
+
+          // remove unnecessary files in async
+          fs.unlink(destFile, function(){});
+          fs.unlink(saveFile, function(){});
+
+          res.send(JSON.stringify({result:'failed'}));
         }
       });
     });
