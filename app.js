@@ -1,9 +1,10 @@
-var express = require("express"),
+var express = require('express'),
     spawn = require('child_process').spawn,
-    fs = require("fs"),
+    fs = require('fs'),
     crypto = require('crypto'),
     http = require("http"),
-    config = require("./config");
+    path = require('path'),
+    config = require('./config');
 
 var app = express();
 
@@ -30,9 +31,9 @@ app.get("/", function(req, res){
   var outputFormat = req.query.outputformat;
   if (from && inputFormat && outputFormat){
     var destFilename = crypto.createHash('md5').update(from + String(new Date().getTime())).digest('hex')+"."+ inputFormat;
-    var saveFilename = crypto.createHash('md5').update(destFile + String(new Date().getTime())).digest('hex')+"."+ outputFormat;
-    var destFile = config.dataPath + destFilename;
-    var saveFile = config.dataPath + saveFilename;
+    var saveFilename = crypto.createHash('md5').update(destFilename + String(new Date().getTime())).digest('hex')+"."+ outputFormat;
+    var destFile = path.join(config.dataPath, destFilename);
+    var saveFile = path.join(config.dataPath, saveFilename);
 
     download(from, destFile, function(){
       var param = [];
@@ -45,7 +46,7 @@ app.get("/", function(req, res){
       ffmpeg.on('close', function(code){
         if (code == 0){
           console.log('Processing finished !');
-          resp = {input: config.httpPath+destFilename, output: config.httpPath+saveFilename};
+          resp = {input: path.join(config.httpPath, destFilename), output: path.join(config.httpPath, saveFilename)};
           res.send(JSON.stringify(resp));
         }
         else{
