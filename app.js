@@ -7,6 +7,8 @@ var express = require('express'),
     config = require('./config');
 
 var app = express();
+var dataPath = config.dataPath || (__dirname + '/data');
+var httpPath = config.httpPath || '/data';
 
 
 var download = function(url, dest, cb) {
@@ -30,10 +32,11 @@ app.get("/", function(req, res){
   var inputFormat = req.query.inputformat;
   var outputFormat = req.query.outputformat;
   if (from && inputFormat && outputFormat){
+
     var destFilename = crypto.createHash('md5').update(from + String(new Date().getTime())).digest('hex')+'.'+ inputFormat;
     var saveFilename = crypto.createHash('md5').update(destFilename + String(new Date().getTime())).digest('hex')+'.'+ outputFormat;
-    var destFile = path.join(config.dataPath, destFilename);
-    var saveFile = path.join(config.dataPath, saveFilename);
+    var destFile = path.join(dataPath, destFilename);
+    var saveFile = path.join(dataPath, saveFilename);
 
     download(from, destFile, function(){
       var param = [];
@@ -46,7 +49,7 @@ app.get("/", function(req, res){
       ffmpeg.on('close', function(code){
         if (code == 0){
           console.log('Processing finished');
-          resp = {result:'success', input: path.join(config.httpPath, destFilename), output: path.join(config.httpPath, saveFilename)};
+          resp = {result:'success', input: path.join(httpPath, destFilename), output: path.join(httpPath, saveFilename)};
           res.send(JSON.stringify(resp));
         }
         else{
@@ -66,6 +69,10 @@ app.get("/", function(req, res){
   }
 });
 
-app.enable('trust proxy')
-app.listen(3000);
+app.enable('trust proxy');
+if (config.serveStatic){
+  // if you want to use express to serve files, instead using a reverse proxy such as Nginx
+  app.use(httpPath, express.static(dataPath));
+}
+app.listen(config.port || 3000);
 

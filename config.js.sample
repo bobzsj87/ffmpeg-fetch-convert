@@ -1,4 +1,4 @@
 module.exports = {
-  dataPath: "/home/bobzhou/sandbox/tmpdata/",
-  httpPath: "/"
+  dataPath: "/home/bobzhou/sandbox/tmpdata",
+  serveStatic: false
 }
