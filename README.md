@@ -6,9 +6,9 @@ This is a simple fetch and convert app using ffmpeg
 * param: additional ffmpeg args separated by ",". e.g. param=-ar,8000,-ac,1
 
 ## config
-You should change the paths in the config file. 
+You should change the paths in the config file. Copy and modify from config.js.sample
 * dataPath: where you save input and output file
 * httpPath: if you use a static file server, you can rewrite the path in the return js
 
 ## install libs
-make sure ffmpeg is install properly, such as libavcodec-extra-53, libmp3lame, etc...
+Make sure ffmpeg is installed properly, such as libavcodec-extra-53, libmp3lame, etc...

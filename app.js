@@ -1,9 +1,9 @@
-var express = require("express");
-var spawn = require('child_process').spawn;
-var fs = require("fs");
-var crypto = require('crypto');
-var http = require("http");
-var config = require("./config");
+var express = require("express"),
+    spawn = require('child_process').spawn,
+    fs = require("fs"),
+    crypto = require('crypto'),
+    http = require("http"),
+    config = require("./config");
 
 var app = express();
 
